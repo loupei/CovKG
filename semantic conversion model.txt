@@ -1,0 +1,81 @@
+import re
+from rdflib import Graph, Literal, RDF, URIRef
+
+# 创建空图谱
+g = Graph()
+# URIRef创建URI链接,Literal创建字面量
+# entity_url = URIRef("http://pubmed.org/shiyan/")
+relation_hascui=URIRef("http://www.relationb.lp/KG#hascui")
+relation_haslabel=URIRef("http://www.relationb.lp/KG#haslabel")
+relation_hastext=URIRef("http://www.relationb.lp/KG#hastext")
+relation_hasannotation=URIRef("http://www.relationa.lp/KG#hasannotation")
+relation_hasurl=URIRef("http://www.relationc.lp/KG#hasurl")
+relation_cui2label=URIRef("http://www.relationb.lp/KG#cui2label")
+relation_hassemantic=URIRef("http://www.relationb.lp/KG#hassemantic")
+
+content = open("E:\癌症\prostaticc.text.out.nt",'r',encoding="utf-8").readlines()
+
+for i in content:
+
+    if "-----" in i:
+        citation=re.findall('Citation (\d+)', i)
+        citation_str = "".join(citation)
+
+    elif "|relation|" in i:
+        pattern1=re.findall('(.*?)\|relation\|(C\d+)\|(.*?)\|(.*?)\|.*\|(.*?)\|(C\d+)\|(.*?)\|(.*?)\|', i)
+        for j in pattern1:
+            # print(i)
+            # 向图谱中添加三元组
+            cui1 = j[1]
+            entity=j[0]
+            g.add((URIRef("http://pubmed.org/lp/"+entity), relation_hascui, (URIRef("http://pubmed.org/lp/"+cui1))))
+            g.add((URIRef("http://pubmed.org/lp/"+citation_str), relation_hasannotation, URIRef("http://pubmed.org/lp/" + entity)))
+            g.add((URIRef("http://pubmed.org/lp/"+cui1), relation_hasurl, Literal("http://linkedlifedata.com/resource/umls/id/" + cui1)))
+
+            cui2 = j[5]
+            g.add((URIRef("http://pubmed.org/lp/"+entity), relation_hascui, (URIRef("http://pubmed.org/lp/"+cui2))))
+            g.add((URIRef("http://pubmed.org/lp/"+citation_str), relation_hasannotation, URIRef("http://pubmed.org/lp/" + entity)))
+            g.add((URIRef("http://pubmed.org/lp/"+cui2), relation_hasurl, Literal("http://linkedlifedata.com/resource/umls/id/" + cui2)))
+
+            label1 = j[2]
+            g.add((URIRef("http://pubmed.org/lp/"+entity), relation_haslabel, Literal(label1)))
+            g.add((URIRef("http://pubmed.org/lp/"+citation_str), relation_hasannotation, URIRef("http://pubmed.org/lp/" + entity)))
+
+            label2 = j[6]
+            g.add((URIRef("http://pubmed.org/lp/"+entity), relation_haslabel, Literal(label2)))
+            g.add((URIRef("http://pubmed.org/lp/"+citation_str), relation_hasannotation, URIRef("http://pubmed.org/lp/" + entity)))
+
+            label3 = j[4]
+            g.add((URIRef("http://pubmed.org/lp/" + cui1), URIRef("http://www.relationc.lp/KG#hasrelation/" + label3),URIRef("http://pubmed.org/lp/" + cui2)))
+
+            g.add((URIRef("http://pubmed.org/lp/" + cui1), relation_cui2label,Literal(label1)))
+            g.add((URIRef("http://pubmed.org/lp/" + cui2), relation_cui2label,Literal(label2)))
+
+            label4 = j[3]
+            g.add((URIRef("http://pubmed.org/lp/" + cui1), relation_hassemantic,Literal(label4)))
+
+            label5 = j[7]
+            g.add((URIRef("http://pubmed.org/lp/" + cui2), relation_hassemantic, Literal(label5)))
+
+            #     # url = "http://uts.nlm.nih.gov/uts/umls/concept/"+cui
+            #     # g.add((entity, relation_hascui, Literal("http://pubmed.org/shiyan/" +url)))
+            #
+            print(cui1, cui2, label1, label2,label3)
+
+    else:
+
+        pattern2 = re.findall('(\d+.(?:ti|ab)+.\d+)', i)
+        pattern2_str="".join(pattern2)
+        g.add((URIRef("http://pubmed.org/lp/"+pattern2_str), relation_hastext, Literal(i)))
+        # g.add((URIRef("http://pubmed.org/shiyan/" + citation_str), relation_hasannotation, URIRef("http://pubmed.org/shiyan/" + pattern2_str)))
+
+# 遍历图谱输出三元组
+print("--- printing raw triples ---")
+for s, p, o in g:
+    print((s, p, o))
+# 以N3格式序列化该图谱
+print("--- printing mboxes ---")
+print(g.serialize(format='nt11'))
+
+with open("F:\lp411.prostaticc.text.out.nt",'w',encoding="utf-8") as f:
+    f.write(g.serialize(format='nt'))
