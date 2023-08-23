@@ -1,0 +1,33 @@
+1. Semantic reasoning-based knowledge discovery
+select ?headlabel ?p ?taillabel ?targetlabel
+where {
+    GRAPH <http://www.imicams.ac.cn/pmd-cov-kg>{
+    	?pmid <http://www.imicams.ac.cn/relation/hasannotation> ?abid.
+    	?abid <http://www.imicams.ac.cn/relation/hascui> ?headcui.
+    	?abid <http://www.imicams.ac.cn/relation/hascui> ?tailcui.
+    	?headcui ?p ?tailcui.
+   	?headcui <http://www.imicams.ac.cn/relation/cui2label> ?headlabel.
+    	?tailcui <http://www.imicams.ac.cn/relation/cui2label> ?taillabel.
+    }
+    GRAPH <http://purl.obolibrary.org/obo/go>{
+        ?goid <http://www.w3.org/2000/01/rdf-schema#label> ?taillabel.
+    }
+    GRAPH <http://www.drugbank.ca/drugs>{
+        ?drugid <http://www.w3.org/2000/01/rdf-schema#label> ?headlabel.
+        ?drugid <https://www.drugbank.ca/drugs/targets> ?targetid.
+        ?targetid <https://www.drugbank.ca/drugs/targetName> ?targetlabel.
+    }        
+}
+ORDER by ?p
+
+2. Triple co-occurrence mechanism
+select distinct ?s ?p ?o (count(distinct ?pmid) as ?count)
+where{
+    GRAPH <http://www.imicams.ac.cn/pmd-cov-kg>{
+    	?pmid <http://www.imicams.ac.cn/relation/hasannotation> ?abid.
+    	?abid <http://www.imicams.ac.cn/relation/hascui> ?s.
+    	?abid <http://www.imicams.ac.cn/relation/hascui> ?o.
+	?s ?p ?o.}
+}
+group by ?s ?p ?o
+order by desc(?count)
