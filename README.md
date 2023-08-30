@@ -3,7 +3,7 @@ Coronavirus knowledge graph(CovKG) is a knowledge graph we have built focusing o
 
 Data
 
-Our constructed PubMedAnn contains 18,687 coronavirus articles from January 2000 to June 2022. The transformed data was stored in a graph database, and we named it PubMedAnn with the namespace “http://www.imicams.ac.cn/pmd-cov-kg” (pubmedann202206rdf.zip).
+Our constructed PubMedAnn contains 18,687 coronavirus articles from January 2000 to June 2022. The transformed data was stored in a graph database, and we named it PubMedAnn with the namespace “http://www.imicams.ac.cn/pmd-cov-kg” (pubmedann_rdf.zip).
 
 In this study, we adopted the DrugBank data in RDF format, and defined a namespace “http://www.drugbank.ca/drugs” for it to organize semantic information across multiple knowledge bases.
 
@@ -15,7 +15,7 @@ Model&Result
 
 PubMedAnn construction
 
-The triples extracted from the PubMed literature are organized through the semantic conversion model, and the knowledge is organized in an orderly manner, and the knowledge is stored in the RDF format. The semantic conversion model code is in file semantic_conversion_model.txt.
+The triples extracted from the PubMed literature are organized through the semantic conversion model, and the knowledge is organized in an orderly manner, and the knowledge is stored in the RDF format. The semantic conversion model code is in semantic_conversion_model.py.
 
 KG embedding：
 
