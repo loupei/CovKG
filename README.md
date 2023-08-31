@@ -1,7 +1,7 @@
 # Coronavirus Knowledge Graph (CovKG)
 
 The Coronavirus Knowledge Graph (CovKG) is a comprehensive biological knowledge graph for coronavirus, relating diseases, virus, drugs, genes, molecular function, etc. CovKG includes information from existing databases such as UMLS, DrugBank, Gene Ontology, and data collected from literature related to coronavirus. CovKG contains 17,369,620 triples, covering 13,065 concepts 209 semantic types, and 97 semantic relations. 
-![image](https://github.com/loupei/CovKG/blob/main/figure.jpg)
+![image](https://github.com/loupei/CovKG/blob/main/schema.png)
 Figure. The main schema of CovKG with the integration of multi-source biomedical knowledge. PubMedAnn: the biomedical literature knowledge base of coronavirus. GO: Gene Ontology.
 
 ## CovKG dataset
